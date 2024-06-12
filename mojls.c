@@ -15,7 +15,7 @@
 #define EXEC_COLOR "\033[1;32m"
 #define FILE_COLOR "\033[0m"
 
-int compare_mtime(const struct dirent **a, const struct dirent **b)
+int compare_mtime(const struct dirent** a, const struct dirent** b)
 {
     struct stat statA, statB;
     char pathA[1024], pathB[1024];
@@ -34,7 +34,7 @@ int compare_mtime(const struct dirent **a, const struct dirent **b)
     return 0;
 }
 
-void print_full_file_info(const char *path, const char *fileName)
+void print_full_file_info(const char* path, const char* fileName)
 {
     struct stat fileInfo;
     char fullPath[1024];
@@ -82,15 +82,14 @@ void print_full_file_info(const char *path, const char *fileName)
     }
 }
 
-void print_output(const char *path, bool all, bool recursive, bool details, bool sort)
+void print_output(const char* path, bool all, bool recursive, bool details, bool sort)
 {
-    struct dirent **namelist;
+    struct dirent** namelist;
     struct stat fileInfo;
     char fullPath[1024];
     long long total_blocks = 0;
 
     int length = scandir(path, &namelist, NULL, sort ? compare_mtime : alphasort);
-
 
     if (details)
     {
@@ -138,17 +137,15 @@ void print_output(const char *path, bool all, bool recursive, bool details, bool
 
         if (recursive && namelist[i]->d_type == DT_DIR)
         {
-            if (strcmp(namelist[i]->d_name, ".") != 0 && strcmp(namelist[i]->d_name, "..") != 0)
+            if (namelist[i]->d_name[0] != '.')
             {
                 char newPath[1024];
-
                 snprintf(newPath, sizeof(newPath), "%s/%s", path, namelist[i]->d_name);
                 printf("\n%s:\n", newPath);
 
                 print_output(newPath, all, recursive, details, sort);
             }
         }
-
         free(namelist[i]);
     }
 
@@ -157,7 +154,7 @@ void print_output(const char *path, bool all, bool recursive, bool details, bool
 
 void print_help()
 {
-    FILE *file = fopen("./help.txt", "r");
+    FILE* file = fopen("./help.txt", "r");
     if (file == NULL)
     {
         perror("Error opening help.txt");
@@ -173,11 +170,11 @@ void print_help()
     fclose(file);
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     int options;
     bool all = false, recursive = false, details = false, sort = false;
-    const char *path = ".";
+    const char* path = ".";
 
     static struct option long_options[] = {
         {"all", no_argument, 0, 'a'},
@@ -185,7 +182,7 @@ int main(int argc, char *argv[])
         {"recursive", no_argument, 0, 'R'},
         {"time", no_argument, 0, 't'},
         {"help", no_argument, 0, 0},
-        {0, 0, 0, 0}};
+        {0, 0, 0, 0} };
 
     while ((options = getopt_long(argc, argv, "alRth", long_options, NULL)) != -1)
     {
